@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار باب الاستثناء - الصف الثاني الثانوي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Container -->
+    <div id="app" class="w-full max-w-3xl bg-slate-800 rounded-2xl shadow-2xl overflow-hidden border border-slate-700">
+        
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-center">
+            <h1 class="text-2xl md:text-3xl font-black text-white mb-2">باب الاستثناء - الصف الثاني الثانوي</h1>
+            <p class="text-emerald-100 text-sm md:text-base">اختبار تفاعلي شامل (50 سؤالاً) مع نموذج الإجابات التفصيلي</p>
+        </header>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="p-8 text-center">
+            <div class="mb-6">
+                <span class="inline-block bg-emerald-500/20 text-emerald-400 font-semibold px-4 py-1.5 rounded-full text-sm mb-4 border border-emerald-500/30">اختبار نحوي تفاعلي</span>
+                <p class="text-slate-300 max-w-lg mx-auto leading-relaxed">
+                    يحتوي هذا الاختبار على 50 سؤالاً تغطي كافة أحكام باب الاستثناء (إلا، غير، سوى، خلا، عدا، حاشا، ليس، لا يكون) وأحكام المستثنى وتفصيلاتها النحوية.
+                </p>
+            </div>
+            <button onclick="startQuiz()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg transition-all duration-300 text-lg hover:scale-105 active:scale-95">
+                ابدأ الاختبار الآن
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden p-6 md:p-8">
+            <!-- Progress Bar & Info -->
+            <div class="flex justify-between items-center mb-6 text-sm text-slate-400 font-medium">
+                <span id="question-counter">السؤال 1 من 50</span>
+                <span id="score-tracker" class="bg-slate-700 px-3 py-1 rounded-lg text-emerald-400">الدرجة: 0</span>
+            </div>
+            <div class="w-full bg-slate-700 h-2 rounded-full mb-8 overflow-hidden">
+                <div id="progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 2%;"></div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="mb-6">
+                <h2 id="question-text" class="text-lg md:text-xl font-bold text-slate-100 leading-relaxed mb-6"></h2>
+                <div id="options-container" class="space-y-3">
+                    <!-- Options will be injected here -->
+                </div>
+            </div>
+
+            <!-- Feedback / Rationale -->
+            <div id="feedback-box" class="hidden mt-6 p-4 rounded-xl text-sm md:text-base border transition-all">
+                <p id="feedback-text" class="font-semibold mb-1"></p>
+                <p id="rationale-text" class="text-slate-300 text-xs md:text-sm leading-relaxed"></p>
+            </div>
+
+            <!-- Navigation Footer -->
+            <div class="mt-8 flex justify-end">
+                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2.5 rounded-xl shadow transition-all">
+                    السؤال التالي
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden p-8 text-center">
+            <div class="mb-6">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-emerald-500/20 text-emerald-400 text-4xl font-black mb-4 border-2 border-emerald-500/40" id="final-score-circle">
+                    0/50
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">انتهى الاختبار!</h2>
+                <p id="result-message" class="text-slate-300 text-base mb-6"></p>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="restartQuiz()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl shadow transition-all">
+                    إعادة الاختبار
+                </button>
+                <button onclick="showReview()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-6 py-3 rounded-xl shadow transition-all">
+                    مراجعة الإجابات التفصيلية
+                </button>
+            </div>
+        </div>
+
+        <!-- Review Screen -->
+        <div id="review-screen" class="hidden p-6 md:p-8 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-white">نموذج الإجابات التفصيلي</h2>
+                <button onclick="restartQuiz()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold px-4 py-2 rounded-lg shadow">
+                    العودة للرئيسية
+                </button>
+            </div>
+            <div id="review-list" class="space-y-6">
+                <!-- Detailed answers list injected here -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script Data & Logic -->
+    <script>
+        const questionsData = [
+            {
+                question: "س 1: ما الركن الذي يُنسب إليه الحكم قبل أداة الاستثناء في أسلوب الاستثناء؟",
+                options: [
+                    { text: "المستثنى", isCorrect: false, rationale: "المستثنى هو الواقع بعد الأداة." },
+                    { text: "المستثنى منه", isCorrect: true, rationale: "المستثنى منه هو الركن المذكور قبل الأداة والذي يُنسب إليه الحكم العام." },
+                    { text: "أداة الاستثناء", isCorrect: false, rationale: "الأداة هي الربط وليست الركن المسند إليه الحكم." },
+                    { text: "المستثنى المفرغ", isCorrect: false, rationale: "هذا اسم لأسلوب وليس ركناً أساسياً نسب إليه الحكم قبل الأداة." }
+                ],
+                hint: "فكر في العنصر العام الذي يقع قبل الأداة ويشمل ما قبله وما بعده."
+            },
+            {
+                question: "س 2: ما حكم المستثنى بـ (إلا) إذا وقع بعد كلام تام موجب متصل (نحو: قام القوم إلا زيداً)؟",
+                options: [
+                    { text: "وجوب النصب على الاستثناء", isCorrect: true, rationale: "في الكلام التام الموجب (المثبت) والمتصل، يجب نصب المستثنى بـ إلا وجوباً." },
+                    { text: "جواز النصب والإتباع", isCorrect: false, rationale: "الإتباع يجوز في الكلام المنفي لا المثبت." },
+                    { text: "وجوب الإتباع على البدلية", isCorrect: false, rationale: "البدلية تكون في الكلام المنفي." },
+                    { text: "الإعراب بحسب الموقع", isCorrect: false, rationale: "هذا حكم الاستثناء المفرغ." }
+                ],
+                hint: "الكلام هنا تام ومثبت (موجب) ومتصل."
+            },
+            {
+                question: "س 3: في قولنا: «وصل المسافرون إلا مسافراً»، كلمة (مسافراً) حكمها الصرفي والنحوي:",
+                options: [
+                    { text: "جائزة النصب والإتباع", isCorrect: false, rationale: "الحكم هنا ليس جواز الإتباع لعدم وجود نفي." },
+                    { text: "واجبة النصب على الاستثناء", isCorrect: true, rationale: "الجملة تامة موجبة ومتصلة، فتعين نصب المستثنى وجوباً." },
+                    { text: "مجرورة بالإضافة", isCorrect: false, rationale: "الأداة 'إلا' حرف وليست مضافة." },
+                    { text: "مفعول به لاسم الفاعل", isCorrect: false, rationale: "إعرابها مستثنى منصوب وجوباً." }
+                ],
+                hint: "انظر إلى خلو الجملة من أدوات النفي وثبوت أركان الاستثناء."
+            },
+            {
+                question: "س 4: إذا كان الكلام تاماً غير موجب (منفياً) والاستثناء متصل (نحو: ما قام أحد إلا....)؟",
+                options: [
+                    { text: "وجوب النصب فقط", isCorrect: false, rationale: "النصب هنا جائز مرجوح وليس واجباً." },
+                    { text: "جواز النصب والإتباع والبدلية أرجح", isCorrect: true, rationale: "في الاستثناء التام المنفي والمتصل يجوز النصب على الاستثناء والإتباع على البدلية والبدل أرجح." },
+                    { text: "الإعراب بحسب الموقع", isCorrect: false, rationale: "الإعراب بحسب الموقع خاص بالاستثناء المفرغ." },
+                    { text: "وجوب الجر بالإضافة", isCorrect: false, rationale: "لا يجر المستثنى بعد إلا." }
+                ],
+                hint: "الكلام منفي والمستثنى من جنس المستثنى منه (متصل)."
+            },
+            {
+                question: "س 5: في جملة: «ما حضر الطلاب إلا عليٌ»، إعراب كلمة (عليٌ) بالرفع هو
